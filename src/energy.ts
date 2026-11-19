@@ -753,9 +753,27 @@ export class Energy {
   }
 }
 
-function metaNumber(meta: Readonly<Record<string, string | undefined>>, field: string): number {
+/**
+ * Receipt meta is `string` in the version of attest this package was written
+ * against and `string | number` in newer ones, so both encodings are accepted.
+ * The value still has to be an exact non-negative integer: a receipt must never
+ * be able to claim half a satang.
+ */
+function metaNumber(
+  meta: Readonly<Record<string, string | number | undefined>>,
+  field: string
+): number {
   const value = meta[field];
-  if (value === undefined || !/^\d+$/.test(value)) {
+  if (typeof value === 'number') {
+    if (!Number.isSafeInteger(value) || value < 0) {
+      throw new EnergyError(
+        'signature-invalid',
+        `settlement meta.${field} must be a non-negative whole number`
+      );
+    }
+    return value;
+  }
+  if (typeof value !== 'string' || !/^\d+$/.test(value)) {
     throw new EnergyError('signature-invalid', `settlement meta.${field} is not a whole number`);
   }
   const parsed = Number(value);
