@@ -1,0 +1,62 @@
+{
+  "name": "sovereign-energy",
+  "version": "0.1.0",
+  "description": "Charge sessions for Sovereign OS: OCPP 2.0.1 TransactionEvent parsing, meter-verified settlement and signed receipts that verify offline.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "example": "tsx src/example.ts"
+  },
+  "keywords": [
+    "sovereign-os",
+    "energy",
+    "ocpp",
+    "charge-session",
+    "meter",
+    "settlement",
+    "receipt",
+    "offline-first",
+    "tamper-evident"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "sovereign-attest": "^0.3.0",
+    "sovereign-vault": "^0.6.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.9.0",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "sovereign-attest": "file:../sovereign-attest",
+    "sovereign-vault": "file:../sovereign-vault",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  }
+}

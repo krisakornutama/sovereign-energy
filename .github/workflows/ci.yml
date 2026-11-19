@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: verify (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      # The vault and attest are peer + file dependencies until they are on npm,
+      # so CI builds the sibling checkouts this package links to before installing.
+      - name: Fetch and build sovereign-vault
+        run: |
+          git clone --depth 1 https://github.com/krisakornutama/sovereign-vault.git ../sovereign-vault
+          cd ../sovereign-vault
+          npm ci
+          npm run build
+      - name: Fetch and build sovereign-attest
+        run: |
+          git clone --depth 1 https://github.com/krisakornutama/sovereign-attest.git ../sovereign-attest
+          cd ../sovereign-attest
+          npm ci
+          npm run build
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm run test:coverage
+      - run: npm run build
+      - run: npm run example
